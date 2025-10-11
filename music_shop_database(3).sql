@@ -24,3 +24,24 @@ FROM Albums a
 JOIN Tracks t ON a.AlbumID = t.AlbumID
 GROUP BY a.AlbumID, a.Title
 ORDER BY AvgDuration DESC;
+-- 4. Все исполнители, которые не выпустили альбомы в 2020 году
+SELECT '4. Исполнители без альбомов в 2020 году:' as query_name;
+SELECT ar.Name AS Artist
+FROM Artists ar
+WHERE ar.ArtistID NOT IN (
+    SELECT DISTINCT aa.ArtistID 
+    FROM AlbumArtists aa
+    JOIN Albums a ON aa.AlbumID = a.AlbumID
+    WHERE a.ReleaseYear = 2020
+);
+-- 5. Названия сборников, в которых присутствует конкретный исполнитель (The Beatles)
+SELECT '5. Сборники с The Beatles:' as query_name;
+SELECT DISTINCT c.Title AS Compilation
+FROM Compilations c
+JOIN CompilationTracks ct ON c.CompilationID = ct.CompilationID
+JOIN Tracks t ON ct.TrackID = t.TrackID
+JOIN Albums a ON t.AlbumID = a.AlbumID
+JOIN AlbumArtists aa ON a.AlbumID = aa.AlbumID
+JOIN Artists ar ON aa.ArtistID = ar.ArtistID
+WHERE ar.Name = 'The Beatles'
+ORDER BY c.Title;
